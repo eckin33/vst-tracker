@@ -19,11 +19,15 @@ app.post('/info', (req, res) => {
     //Recebimento dos dados
 
     const { device, time } = req.body
-    const location = req.headers["x-forwarded-for"] 
+    const location =
+        req.headers["x-forwarded-for"]?.split(",")[0] ||
+        req.socket?.remoteAddress;
+
+    console.log(req.headers)
 
     try {
         //Validação mor
-        
+
         if (!device || !time) {
             res.status(400).json({
                 status: "Erro",
@@ -40,13 +44,14 @@ app.post('/info', (req, res) => {
             },
             body: JSON.stringify({
                 chat_id: `${process.env.CHAT_KEY}`,
-                text: `🚀 Teste do Tracker \n\n 💻 Dispositivo: ${device} \n 📍 Localização: ${location} \n ⌚ Hora: ${time}` 
+                text: `🚀 Nova visualização do Portfólio \n\n 💻 Dispositivo: ${device} \n 📍 Localização: ${location} \n ⌚ Hora: ${time}`
             })
         })
 
         res.status(200).json({
             status: "Sucesso",
-            message: "Jhones foi notificado com sucesso!"
+            message: "Jhones foi notificado com sucesso!",
+            location: location
         })
 
     } catch (error) {
