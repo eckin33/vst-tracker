@@ -19,15 +19,13 @@ app.post('/info', (req, res) => {
     //Recebimento dos dados
 
     const { device, time } = req.body
-    const location =
-        req.headers["x-forwarded-for"]?.split(",")[0] ||
-        req.socket?.remoteAddress;
-
+    const location = req.headers["x-forwarded-for"] || req.ip
+    
     console.log(req.headers)
 
     try {
         //Validação mor
-
+        
         if (!device || !time) {
             res.status(400).json({
                 status: "Erro",
@@ -44,7 +42,7 @@ app.post('/info', (req, res) => {
             },
             body: JSON.stringify({
                 chat_id: `${process.env.CHAT_KEY}`,
-                text: `🚀 Nova visualização do Portfólio \n\n 💻 Dispositivo: ${device} \n 📍 Localização: ${location} \n ⌚ Hora: ${time}`
+                text: `🚀 Nova visualização do Portfólio \n\n 💻 Dispositivo: ${device} \n 📍 Localização: ${location} \n ⌚ Hora: ${time}` 
             })
         })
 
