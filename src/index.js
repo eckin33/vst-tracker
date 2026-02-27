@@ -7,6 +7,7 @@ const app = express()
 const port = 3000
 
 app.use(express.json())
+app.use(express.text());
 app.use(cors())
 
 app.get('/', (req, res) => {
@@ -18,11 +19,15 @@ app.get('/', (req, res) => {
 app.post('/info', async (req, res) => {
     //Recebimento dos dados
 
-    const { device, time } = req.body
+    const body = typeof req.body === "string"
+        ? JSON.parse(req.body)
+        : req.body;
+
+    const { device, time } = body
     const location = req.headers["x-forwarded-for"] || req.ip
 
     //console.log(req.headers)
-    
+
     try {
         //Validação mor
         async function ipInfo() {
@@ -30,7 +35,7 @@ app.post('/info', async (req, res) => {
             const geoData = await geoResponse.json();
 
             console.log(geoData)
-    
+
             return geoData.city
         }
 
