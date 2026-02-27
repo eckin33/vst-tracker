@@ -23,7 +23,7 @@ app.post('/info', async (req, res) => {
         ? JSON.parse(req.body)
         : req.body;
 
-    const { device, time } = body
+    const { project, device, time, gateKey } = body
     const location = req.headers["x-forwarded-for"] || req.ip
 
     //console.log(req.headers)
@@ -41,11 +41,31 @@ app.post('/info', async (req, res) => {
 
         let ipCity = await ipInfo()
 
-        if (!device || !time) {
-            res.status(400).json({
+        if (!project || !device || !time || !gateKey) {
+            return res.status(400).json({
                 status: "Erro",
-                message: "Erro ao receber dados."
+                message: "Erro ao receber dados. Something is missing."
             })
+        }
+
+        switch (project) {
+            case "portfolio":
+                if (gateKey !== process.env.GATE_KEY_PORT) {
+                    return res.status(401).json({
+                        status: "Erro",
+                        message: "Gate Key inválida. Acesso negado."
+                    })
+                }
+                break;
+
+            case "nobre":
+                if (gateKey !== process.env.GATE_KEY_NOBRE) {
+                    return res.status(401).json({
+                        status: "Erro",
+                        message: "Gate Key inválida. Acesso negado."
+                    })
+                }
+                break;
         }
 
         //Main
@@ -57,7 +77,7 @@ app.post('/info', async (req, res) => {
             },
             body: JSON.stringify({
                 chat_id: `${process.env.CHAT_KEY}`,
-                text: `🚀 Nova visualização do Portfólio \n\n 💻 Dispositivo: ${device} \n 📍 Localização: ${ipCity} + ip: ${location} \n ⌚ Hora: ${time}`
+                text: `🚀 Nova visualização do ${project === "nobre" ? "site da Nobre Soluções Digitais" : project} \n\n 💻 Dispositivo: ${device} \n 📍 Localização: ${ipCity} + ip: ${location} \n ⌚ Hora: ${time}`
             })
         })
 
