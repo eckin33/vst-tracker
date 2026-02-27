@@ -57,7 +57,7 @@ app.post('/info', async (req, res) => {
             },
             body: JSON.stringify({
                 chat_id: `${process.env.CHAT_KEY}`,
-                text: `🚀 Nova visualização do Portfólio \n\n 💻 Dispositivo: ${device} \n 📍 Localização: ${ipCity} \n ⌚ Hora: ${time}`
+                text: `🚀 Nova visualização do Portfólio \n\n 💻 Dispositivo: ${device} \n 📍 Localização: ${ipCity} + ip: ${location} \n ⌚ Hora: ${time}`
             })
         })
 
