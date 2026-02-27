@@ -23,7 +23,7 @@ app.post('/info', async (req, res) => {
         ? JSON.parse(req.body)
         : req.body;
 
-    const { project, device, time, gateKey } = body
+    const { project, device, time } = body
     const location = req.headers["x-forwarded-for"] || req.ip
 
     //console.log(req.headers)
@@ -41,31 +41,11 @@ app.post('/info', async (req, res) => {
 
         let ipCity = await ipInfo()
 
-        if (!project || !device || !time || !gateKey) {
+        if (!project || !device || !time ) {
             return res.status(400).json({
                 status: "Erro",
                 message: "Erro ao receber dados. Something is missing."
             })
-        }
-
-        switch (project) {
-            case "portfolio":
-                if (gateKey !== process.env.GATE_KEY_PORT) {
-                    return res.status(401).json({
-                        status: "Erro",
-                        message: "Gate Key inválida. Acesso negado."
-                    })
-                }
-                break;
-
-            case "nobre":
-                if (gateKey !== process.env.GATE_KEY_NOBRE) {
-                    return res.status(401).json({
-                        status: "Erro",
-                        message: "Gate Key inválida. Acesso negado."
-                    })
-                }
-                break;
         }
 
         //Main
