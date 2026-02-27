@@ -15,17 +15,27 @@ app.get('/', (req, res) => {
 })
 
 
-app.post('/info', (req, res) => {
+app.post('/info', async (req, res) => {
     //Recebimento dos dados
 
     const { device, time } = req.body
     const location = req.headers["x-forwarded-for"] || req.ip
-    
-    console.log(req.headers)
 
+    //console.log(req.headers)
+    
     try {
         //Validação mor
-        
+        async function ipInfo() {
+            const geoResponse = await fetch(`http://ip-api.com/json/${location}`);
+            const geoData = await geoResponse.json();
+
+            console.log(geoData)
+    
+            return geoData.city
+        }
+
+        let ipCity = await ipInfo()
+
         if (!device || !time) {
             res.status(400).json({
                 status: "Erro",
@@ -42,7 +52,7 @@ app.post('/info', (req, res) => {
             },
             body: JSON.stringify({
                 chat_id: `${process.env.CHAT_KEY}`,
-                text: `🚀 Nova visualização do Portfólio \n\n 💻 Dispositivo: ${device} \n 📍 Localização: ${location} \n ⌚ Hora: ${time}` 
+                text: `🚀 Nova visualização do Portfólio \n\n 💻 Dispositivo: ${device} \n 📍 Localização: ${ipCity} \n ⌚ Hora: ${time}`
             })
         })
 
