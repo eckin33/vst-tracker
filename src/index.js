@@ -4,7 +4,7 @@ import cors from 'cors'
 dotenv.config();
 
 const app = express()
-const port = 3000
+const port = 3002
 
 app.use(express.json())
 app.use(express.text());
@@ -15,6 +15,35 @@ app.get('/', (req, res) => {
 
 })
 
+app.get('/lead', (req, res) => {
+
+    try {
+        fetch(`https://api.telegram.org/bot${process.env.API_KEY}/sendMessage`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    chat_id: `${process.env.CHAT_KEY}`,
+                    text: `Novo lead, assume`
+                })
+            })
+
+        res.status(200).json({
+            status: "Sucesso",
+            message: "Jhones foi notificado com sucesso!"
+        })    
+    } catch (error) {
+        res.status(404).json({
+            status: "Erro",
+            message: "Deu B.O aí pra cima, resolve aí meu fi.",
+            error: error
+        })
+    }
+    
+
+
+})
 
 app.post('/info', async (req, res) => {
     //Recebimento dos dados
